@@ -16,7 +16,6 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import Divider from '@material-ui/core/Divider';
 
 import transactions from '../data';
 
@@ -34,12 +33,12 @@ const useRowStyles = makeStyles({
   });
 
 const calPoints = (money) => {
-    if (money >=50 && money < 100) {
-        return money-50;
-    } else if (money >100){
-        return (2*(money-100) + 50);
+    if(money >100) {
+      return (2 * (money - 100) + 50);
+    } else if(money >= 50 && money < 100) {
+      return money - 50;
     }
-    return 0;
+    return 0
 };
 
 const transByNameAndMonth = (trans) => {
@@ -93,78 +92,78 @@ const summaryByCustomer = () => {
     return Object.entries(totalPoints).map((arr, i) => { 
         return {'name': arr[0], 'points': arr[1]}
     });
-}
+};
 
-  function Row(props) {
-    const { row } = props;
-    const [open, setOpen] = React.useState(false);
-    const classes = useRowStyles();
-    const obj = transByNameAndMonth(transactions);
-    const rowTransHistory = get(obj, [row.name, row.month])
-  
-    return (
-      <React.Fragment>
-        <TableRow className={classes.root}>
-          <TableCell>
-            <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+function Row(props) {
+  const { row } = props;
+  const [open, setOpen] = React.useState(false);
+  const classes = useRowStyles();
+  const obj = transByNameAndMonth(transactions);
+  const rowTransHistory = get(obj, [row.name, row.month])
+
+  return (
+    <React.Fragment>
+      <TableRow className={classes.root}>
+        <TableCell>
+          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
-          </TableCell>
-          <TableCell component="th" scope="row">
-            {row.name}
-          </TableCell>
-          <TableCell align="center">{row.month}</TableCell>
-          <TableCell align="center">{row.numOfTrans}</TableCell>
-          <TableCell align="center">{row.pointsPerMonth}</TableCell>
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {row.name}
+        </TableCell>
+        <TableCell align="center">{row.month}</TableCell>
+        <TableCell align="center">{row.numOfTrans}</TableCell>
+        <TableCell align="center">{row.pointsPerMonth}</TableCell>
         </TableRow>
-        <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box margin={1}>
-                <Typography variant="h6" gutterBottom component="div">
-                  {`History of ${row.month}`}
-                </Typography>
-                <Table size="small" aria-label="purchases">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Money Spent</TableCell>
-                      <TableCell>Reward Points</TableCell>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box margin={1}>
+              <Typography variant="h6" gutterBottom component="div">
+                {`History of ${row.month}`}
+              </Typography>
+              <Table size="small" aria-label="purchases">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Date</TableCell>
+                    <TableCell>Money Spent</TableCell>
+                    <TableCell>Reward Points</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rowTransHistory.map((historyRow) => (
+                    <TableRow key={historyRow.date}>
+                      <TableCell component="th" scope="row">
+                        {historyRow.name}
+                      </TableCell>
+                      <TableCell>{historyRow.date}</TableCell>
+                      <TableCell>{historyRow.money}</TableCell>
+                      <TableCell>{historyRow.point}</TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {rowTransHistory.map((historyRow) => (
-                      <TableRow key={historyRow.date}>
-                        <TableCell component="th" scope="row">
-                          {historyRow.name}
-                        </TableCell>
-                        <TableCell>{historyRow.date}</TableCell>
-                        <TableCell>{historyRow.money}</TableCell>
-                        <TableCell>{historyRow.point}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Box>
-            </Collapse>
-          </TableCell>
-        </TableRow>
-      </React.Fragment>
-    );
-  }
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </React.Fragment>
+  );
+};
 
-  export default function RewardTable() {
-    const classes = useRowStyles();
-    const monthlyRows = sumByCustomerPerMonth(transactions);
-    const totalRows = summaryByCustomer();
+export default function RewardTable() {
+  const classes = useRowStyles();
+  const monthlyRows = sumByCustomerPerMonth(transactions);
+  const totalRows = summaryByCustomer();
 
-    return (
-        <>
-        <Paper className={classes.root}>
+  return (
+    <>
+      <Paper className={classes.root}>
         <Typography variant="h4" gutterBottom>
-        Reward Points by Customer Per Month
-      </Typography>
+        Reward Points by Customer per Month
+        </Typography>
         <TableContainer className={classes.container}>
         <Table aria-label="collapsible table">
           <TableHead>
@@ -185,30 +184,30 @@ const summaryByCustomer = () => {
       </TableContainer>
       </Paper>
       <Paper className={classes.root}>
-      <Typography variant="h4" gutterBottom>
-        Total Reward Points by Customer
-      </Typography>
-      <TableContainer className={classes.container}>
-      <Table className={classes.table} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell >Total Reward Points</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {totalRows.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell>{row.points}</TableCell>
+        <Typography variant="h4" gutterBottom>
+          Total Reward Points by Customer
+        </Typography>
+        <TableContainer className={classes.container}>
+        <Table className={classes.table} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell >Total Reward Points</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      </TableContainer>
+          </TableHead>
+          <TableBody>
+            {totalRows.map((row) => (
+              <TableRow key={row.name}>
+                <TableCell component="th" scope="row">
+                  {row.name}
+                </TableCell>
+                <TableCell>{row.points}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        </TableContainer>
       </Paper>
-</>
-    );
-  }
+    </>
+  );
+};
